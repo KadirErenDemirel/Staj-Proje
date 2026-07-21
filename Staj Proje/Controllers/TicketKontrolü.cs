@@ -13,13 +13,13 @@ namespace Staj_Proje.Controllers
         {
             _context = context;
         }
-        // Biletleri Listeleme ( GET isteği )
+        // Ticket Listeleme ( GET )
         [HttpGet]
         public IActionResult HepsiniGetir()
         {
             return Ok(_context.Tickets.ToArray().ToList());
         }
-        // Yeni Ticket ekleme ( POST ) 
+        // Ticket ekleme ( POST ) 
         [HttpPost]
         public IActionResult YeniEkle(Ticket bilet)
         {
