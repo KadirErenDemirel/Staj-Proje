@@ -61,9 +61,9 @@ export default function Kanban() {
         }
     };
 
-    // YENİ EKLENEN MARKDOWN İNDİRME FONKSİYONU
+    
     const markdownIndir = (bilet: Ticket) => {
-        // Markdown formatında temiz bir şablon oluşturuyoruz
+        
         const mdIcerik = `
 # Bilet Detayı: ${bilet.baslik}
 
@@ -76,19 +76,19 @@ export default function Kanban() {
 ${bilet.aciklama}
     `.trim();
 
-        // Veriyi bilgisayarın anlayacağı bir Blob (Dosya Paketi) formatına çeviriyoruz
+        
         const blob = new Blob([mdIcerik], { type: 'text/markdown' });
         const url = URL.createObjectURL(blob);
 
-        // Arka planda görünmez bir 'a' etiketi (link) oluşturup tıklatıyoruz
+        
         const a = document.createElement('a');
         a.href = url;
-        // Dosya adını dinamik yaptık: Örn: Bilet-14-Odeme-Hatasi.md
+       
         a.download = `Bilet-${bilet.id}-${bilet.baslik.replace(/\s+/g, '-')}.md`;
         document.body.appendChild(a);
         a.click();
 
-        // İşlem bitince kalıntıları temizliyoruz
+        
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     };

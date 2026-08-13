@@ -22,48 +22,48 @@ namespace Staj_Proje.Controllers
         // Ticket ekleme ( POST ) 
         [HttpPost]
         [HttpPost]
-        // Eski [FromBody] yerine [FromForm] kullanıyoruz
+       
         public async Task<IActionResult> PostTicket([FromForm] TalepOlusturDto formVerisi)
         {
             string dosyaYolu = null;
 
-            // Eğer kullanıcı bir dosya seçtiyse bu bloğa girer
+            
             if (formVerisi.EkDosya != null && formVerisi.EkDosya.Length > 0)
             {
-                // Dosyaları kaydedeceğimiz "wwwroot/uploads" klasörünün yolunu belirliyoruz
+                
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
 
-                // Eğer o klasör henüz yoksa, sistemi çökertmemek için sıfırdan oluşturuyoruz
+                
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
                 }
 
-                // Aynı isimli dosyalar birbirini ezmesin diye isimlerine benzersiz bir ID (Guid) ekliyoruz
+                
                 var benzersizDosyaAdi = Guid.NewGuid().ToString() + "_" + formVerisi.EkDosya.FileName;
                 var tamYol = Path.Combine(uploadsFolder, benzersizDosyaAdi);
 
-                // Dosyayı sunucuya fiziksel olarak kopyalıyoruz
+                
                 using (var stream = new FileStream(tamYol, FileMode.Create))
                 {
                     await formVerisi.EkDosya.CopyToAsync(stream);
                 }
 
-                // Veritabanına yazılacak olan temiz URL formatı
+                
                 dosyaYolu = "/uploads/" + benzersizDosyaAdi;
             }
 
-            // Yeni bileti oluşturuyoruz
+           
             var yeniBilet = new Ticket
             {
                 musteriAdSoyad = formVerisi.MusteriAdSoyad,
                 Baslik = formVerisi.Baslik,
                 Aciklama = formVerisi.Aciklama,
                 TalepTuru = formVerisi.Tur,
-                Departman = "Müşteri Destek", // AI entegrasyonuna kadar varsayılan
+                Departman = "Müşteri Destek", 
                 AciliyetSeviyesi = "Normal",
                 Durum = "Yeni",
-                DosyaYolu = dosyaYolu // Yüklenen dosyanın yolunu veritabanına yazdık
+                DosyaYolu = dosyaYolu 
             };
 
             _context.Tickets.Add(yeniBilet);

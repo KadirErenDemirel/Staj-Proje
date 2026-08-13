@@ -94,7 +94,7 @@ export default function Dashboard() {
                                 <XAxis dataKey="name" tick={{ fontSize: 12 }} />
                                 <YAxis allowDecimals={false} />
                                 <Tooltip cursor={{ fill: '#f3f4f6' }} />
-                                {/* Animasyon engeli kaldırıldı */}
+                                
                                 <Bar dataKey="deger" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
@@ -106,7 +106,7 @@ export default function Dashboard() {
                     <div className="h-72">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
-                                {/* Animasyon engeli kaldırıldı */}
+                                
                                 <Pie
                                     data={aciliyetVerisi}
                                     cx="50%"

@@ -10,7 +10,7 @@ function App() {
     const [dosya, setDosya] = useState<File | null>(null);
     const [aktifSayfa, setAktifSayfa] = useState<string>('form');
 
-    // Dosya input'unu fiziksel olarak temizlemek için Ref kullanıyoruz
+ 
     const dosyaInputRef = useRef<HTMLInputElement>(null);
 
     const formGonder = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -35,14 +35,14 @@ function App() {
             if (response.ok) {
                 alert("Bilet ve dosya başarıyla sisteme iletildi!");
 
-                // Kayıttan sonra formun içini TAMAMEN temizle
+
                 setBaslik('');
                 setAciklama('');
                 setTur('Hata (Bug) Bildirimi');
-                setMusteriAdSoyad(''); // İsim alanını sıfırladık
-                setDosya(null); // Dosya state'ini sıfırladık
+                setMusteriAdSoyad(''); 
+                setDosya(null); 
 
-                // Tarayıcıdaki dosya ismini görsel olarak sıfırladık
+                
                 if (dosyaInputRef.current) {
                     dosyaInputRef.current.value = '';
                 }
