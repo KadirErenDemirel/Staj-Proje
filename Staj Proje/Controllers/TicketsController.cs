@@ -1,0 +1,109 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Staj_Proje.Models;
+
+namespace Staj_Proje.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+
+    public class TicketsController : ControllerBase
+    {
+        private readonly VeritabaniYonetici _context;
+        public TicketsController(VeritabaniYonetici context)
+        {
+            _context = context;
+        }
+        // Ticket Listeleme ( GET )
+        [HttpGet]
+        public IActionResult HepsiniGetir()
+        {
+            return Ok(_context.Tickets.ToArray().ToList());
+        }
+        // Ticket ekleme ( POST ) 
+        [HttpPost]
+        [HttpPost]
+        // Eski [FromBody] yerine [FromForm] kullanıyoruz
+        public async Task<IActionResult> PostTicket([FromForm] TalepOlusturDto formVerisi)
+        {
+            string dosyaYolu = null;
+
+            // Eğer kullanıcı bir dosya seçtiyse bu bloğa girer
+            if (formVerisi.EkDosya != null && formVerisi.EkDosya.Length > 0)
+            {
+                // Dosyaları kaydedeceğimiz "wwwroot/uploads" klasörünün yolunu belirliyoruz
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+
+                // Eğer o klasör henüz yoksa, sistemi çökertmemek için sıfırdan oluşturuyoruz
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                // Aynı isimli dosyalar birbirini ezmesin diye isimlerine benzersiz bir ID (Guid) ekliyoruz
+                var benzersizDosyaAdi = Guid.NewGuid().ToString() + "_" + formVerisi.EkDosya.FileName;
+                var tamYol = Path.Combine(uploadsFolder, benzersizDosyaAdi);
+
+                // Dosyayı sunucuya fiziksel olarak kopyalıyoruz
+                using (var stream = new FileStream(tamYol, FileMode.Create))
+                {
+                    await formVerisi.EkDosya.CopyToAsync(stream);
+                }
+
+                // Veritabanına yazılacak olan temiz URL formatı
+                dosyaYolu = "/uploads/" + benzersizDosyaAdi;
+            }
+
+            // Yeni bileti oluşturuyoruz
+            var yeniBilet = new Ticket
+            {
+                musteriAdSoyad = formVerisi.MusteriAdSoyad,
+                Baslik = formVerisi.Baslik,
+                Aciklama = formVerisi.Aciklama,
+                TalepTuru = formVerisi.Tur,
+                Departman = "Müşteri Destek", // AI entegrasyonuna kadar varsayılan
+                AciliyetSeviyesi = "Normal",
+                Durum = "Yeni",
+                DosyaYolu = dosyaYolu // Yüklenen dosyanın yolunu veritabanına yazdık
+            };
+
+            _context.Tickets.Add(yeniBilet);
+            await _context.SaveChangesAsync();
+
+            return Ok(yeniBilet);
+        }
+
+        //Ticket Güncelleme ( PUT )
+        [HttpPut("{id}")]
+        public IActionResult Guncelle(int id, Ticket bilet)
+        {
+            if (id != bilet.Id)
+                return BadRequest("ID'ler uyuşmuyor kanka!");
+
+            _context.Tickets.Update(bilet);
+            _context.SaveChanges();
+            return Ok(bilet);
+        }
+
+        // Ticket Silme ( DELETE )
+        [HttpDelete("{id}")]
+        public IActionResult Sil(int id)
+        {
+            var silinecekBilet = _context.Tickets.Find(id);
+            if (silinecekBilet == null)
+                return NotFound("Silinecek bilet bulunamadı!");
+
+            _context.Tickets.Remove(silinecekBilet);
+            _context.SaveChanges();
+            return Ok();
+        }
+        public class TalepOlusturDto
+        {
+            public string MusteriAdSoyad { get; set; }
+            public string Baslik { get; set; }
+            public string Aciklama { get; set; }
+            public string Tur { get; set; }
+            public IFormFile? EkDosya { get; set; } 
+        }
+    }
+}
+
