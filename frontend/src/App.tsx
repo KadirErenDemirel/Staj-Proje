@@ -46,6 +46,7 @@ function App() {
                 if (dosyaInputRef.current) {
                     dosyaInputRef.current.value = '';
                 }
+                window.location.reload();
             } else {
                 alert("Bağlantı başarılı ama sunucu bir hata döndürdü!");
             }

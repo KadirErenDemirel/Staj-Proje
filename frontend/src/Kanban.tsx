@@ -22,7 +22,7 @@ export default function Kanban() {
     }, []);
 
     const biletSil = async (id: number) => {
-        if (!window.confirm("Bu bileti silmek istediğine emin misin kanka?")) return;
+        if (!window.confirm("Bu bileti silmek istediğine emin misin?")) return;
 
         try {
             const response = await fetch(`https://localhost:7107/api/tickets/${id}`, {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Staj_Proje.Models;
+using System.Net.Sockets;
 
 namespace Staj_Proje.Controllers
 {
@@ -62,10 +63,11 @@ namespace Staj_Proje.Controllers
                 TalepTuru = formVerisi.Tur,
                 Departman = "Müşteri Destek", 
                 AciliyetSeviyesi = "Normal",
-                Durum = "Yeni",
+                Durum = "Onay Bekliyor",
                 DosyaYolu = dosyaYolu 
             };
-
+            
+            Staj_Proje.Services.AiTriageService.AnalizYap(yeniBilet);
             _context.Tickets.Add(yeniBilet);
             await _context.SaveChangesAsync();
 
